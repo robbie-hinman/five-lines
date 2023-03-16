@@ -17,11 +17,36 @@ enum Tile {
   LOCK2,
 }
 
-enum Input {
+enum RawInput {
   UP,
   DOWN,
   LEFT,
   RIGHT,
+}
+
+interface Input {
+  handle(): void;
+}
+
+class Right implements Input {
+  handle() {
+    moveHorizontal(1);
+  }
+}
+class Left implements Input {
+  handle() {
+    moveHorizontal(-1);
+  }
+}
+class Up implements Input {
+  handle() {
+    moveVertical(-1);
+  }
+}
+class Down implements Input {
+  handle() {
+    moveVertical(1);
+  }
 }
 
 let playerx = 1;
@@ -92,17 +117,10 @@ function moveVertical(dy: number) {
   }
 }
 
-function handleInput(input: Input) {
-  if (input === Input.LEFT) moveHorizontal(-1);
-  else if (input === Input.RIGHT) moveHorizontal(1);
-  else if (input === Input.UP) moveVertical(-1);
-  else if (input === Input.DOWN) moveVertical(1);
-}
-
 function handleInputs() {
   while (inputs.length > 0) {
     let current = inputs.pop();
-    handleInput(current);
+    current.handle();
   }
 }
 
@@ -196,8 +214,8 @@ const UP_KEY = "ArrowUp";
 const RIGHT_KEY = "ArrowRight";
 const DOWN_KEY = "ArrowDown";
 window.addEventListener("keydown", (e) => {
-  if (e.key === LEFT_KEY || e.key === "a") inputs.push(Input.LEFT);
-  else if (e.key === UP_KEY || e.key === "w") inputs.push(Input.UP);
-  else if (e.key === RIGHT_KEY || e.key === "d") inputs.push(Input.RIGHT);
-  else if (e.key === DOWN_KEY || e.key === "s") inputs.push(Input.DOWN);
+  if (e.key === LEFT_KEY || e.key === "a") inputs.push(new Left());
+  else if (e.key === UP_KEY || e.key === "w") inputs.push(new Up());
+  else if (e.key === RIGHT_KEY || e.key === "d") inputs.push(new Right());
+  else if (e.key === DOWN_KEY || e.key === "s") inputs.push(new Down());
 });
